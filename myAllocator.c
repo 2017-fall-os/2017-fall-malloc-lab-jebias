@@ -201,11 +201,11 @@ BlockPrefix_t *findBestFit(size_t s) {	/* find best block with usable space > s 
 	current = computeUsableSpace(p);
 	if(current == s)
 	  return p;
-	else if(bestsize == 0 && current > s){
+	else if(bestsize == 0 && current > s){//first size that could be the best fit
 	  bestsize = current;
 	  bestfit = p;
 	}
-	else if(current > s && current < bestsize){
+	else if(current > s && current < bestsize){//if this space is better than the previous best space
 	  bestsize = current;
 	  bestfit = p;
 	}
@@ -305,20 +305,24 @@ void freeRegion(void *r) {
 */
 void *resizeRegion(void *r, size_t newSize) {
   int oldSize;
-  if (r != (void *)0)		/* old region existed */
-    oldSize = computeUsableSpace(regionToPrefix(r));
-  else
-    oldSize = 0;		/* non-existant regions have size 0 */
-  if (oldSize >= newSize)	/* old region is big enough */
-    return r;
-  else {			/* allocate new region & copy old data */
-    char *o = (char *)r;	/* treat both regions as char* */
-    char *n = (char *)firstFitAllocRegion(newSize); 
-    int i;
-    for (i = 0; i < oldSize; i++) /* copy byte-by-byte, should use memcpy */
-      n[i] = o[i];
-    freeRegion(o);		/* free old region */
-    return (void *)n;
+  if(newSize > oldSize){//if the new size is less than the old size, do nothing
+    if (r != (void *)0)		/* old region existed */
+      oldSize = computeUsableSpace(regionToPrefix(r));
+    else
+      oldSize = 0;		/* non-existant regions have size 0 */
+    if (oldSize >= newSize)	/* old region is big enough */
+      return r;
+    else {			/* allocate new region & copy old data */
+      char *o = (char *)r;	/* treat both regions as char* */
+      char *n = (char *)bestFitAllocRegion(newSize); 
+      int i;
+      for (i = 0; i < oldSize; i++) /* copy byte-by-byte, should use memcpy */
+	n[i] = o[i];
+      freeRegion(o);		/* free old region */
+      return (void *)n;
+    }
   }
+  else
+    return r;
 }
 

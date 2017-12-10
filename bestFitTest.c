@@ -19,21 +19,38 @@ void getutime(struct timeval *t)
 
 int main() 
 {
-  void *p1, *p2, *p3;
+  void *p1, *p2, *p3, *p4, *p5, *p6;
   arenaCheck();
   p1 = bestFitAllocRegion(254);
   arenaCheck();
   p2 = bestFitAllocRegion(25400);
   arenaCheck();
-  p3 = bestFitAllocRegion(254);
-  printf("%8zx %8zx %8zx\n", p1, p2, p3);
+  p3 = bestFitAllocRegion(25);
+  p4 = bestFitAllocRegion(32);
   arenaCheck();
-  freeRegion(p2);
+  p5 = bestFitAllocRegion(124);
   arenaCheck();
-  freeRegion(p3);
+  p6 = bestFitAllocRegion(2540);
   arenaCheck();
-  freeRegion(p1);
+  
+  printf("%8zx %8zx %8zx %8zx %8zx %8zx\n", p1, p2, p3, p4, p5, p6);
   arenaCheck();
+  freeRegion(p1);//254
+  arenaCheck();
+  freeRegion(p3);//25
+  arenaCheck();
+  freeRegion(p5);//124
+  arenaCheck();
+
+  p1 = bestFitAllocRegion(24);
+  arenaCheck();
+  p3 = bestFitAllocRegion(250);
+  arenaCheck();
+  p5 = bestFitAllocRegion(100);
+  arenaCheck();
+
+  printf("%8zx %8zx %8zx %8zx %8zx %8zx\n", p1, p2, p3, p4, p5, p6);
+  
   {				/* measure time for 10000 mallocs */
     struct timeval t1, t2;
     int i;
